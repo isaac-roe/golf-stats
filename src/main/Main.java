@@ -1,20 +1,14 @@
-package sample;
+package main;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -51,7 +45,8 @@ public class Main extends Application {
         primaryStage.show();
 
         btn.setOnAction((event) -> {
-            System.out.println("Test");
+            double ans = UtilityFunctions.calculateHole(70, 2);
+            System.out.println(ans);
         });
 
 //        MenuItem menuItem1 = new MenuItem("Action 1");
