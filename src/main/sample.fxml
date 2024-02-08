@@ -3,6 +3,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Text?>
 <GridPane fx:controller="main.Controller"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <Text>"Scene 2"</Text>
 </GridPane>

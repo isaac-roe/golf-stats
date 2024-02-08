@@ -7,6 +7,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -16,6 +18,7 @@ import java.io.IOException;
 public class Main extends Application {
 
     private Stage primaryStage;
+    private TabPane tabPane;
 
     public static void main(String[] args) {
         launch(args);
@@ -23,9 +26,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene((javafx.scene.Parent) root, 750, 750));
+        primaryStage.setScene(new Scene((Parent) root, 750, 750));
+
+//        tabPane = new TabPane();
+//
+//        Tab tab1 = new Tab("Home");
+//        tab1.setClosable(false);
+//
+//        tabPane.getTabs().add(tab1);
+
+//        root.setCenter(tabPane);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -47,6 +59,27 @@ public class Main extends Application {
         btn.setOnAction((event) -> {
             double ans = UtilityFunctions.calculateHole(70, 2);
             System.out.println(ans);
+        });
+
+//        tab1.setContent(btn);
+
+
+        Button btnTwo = new Button("Test");
+        HBox hbBtnTwo = new HBox(10);
+        hbBtnTwo.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtnTwo.getChildren().add(btnTwo);
+        grid.add(hbBtnTwo, 2, 4);
+
+        btnTwo.setOnAction((event) -> {
+            try {
+                SceneController.switchToScene2(event);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+//            Scene sceneTwo = new Scene(grid, 750, 500);
+//            primaryStage.setScene(sceneTwo);
+//
+//            primaryStage.show();
         });
 
 //        MenuItem menuItem1 = new MenuItem("Action 1");
