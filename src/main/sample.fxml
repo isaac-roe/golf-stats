@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.text.Text?>
 <GridPane fx:controller="main.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10"
+          prefHeight="400.0" prefWidth="600.0">
     <Text>"Scene 2"</Text>
 </GridPane>

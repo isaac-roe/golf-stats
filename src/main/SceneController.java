@@ -15,8 +15,8 @@ public class SceneController {
     private static Scene scene;
     private static Parent root;
 
-    public void switchToScene1(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
+    public static void switchToScene1(javafx.event.ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(SceneController.class.getResource("home.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -32,6 +32,7 @@ public class SceneController {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+//        Controller.buttonFunctions(testEvent);
         stage.show();
     }
 }
