@@ -112,9 +112,114 @@ public class UtilityFunctions {
         sgApp.put(600, 5.13);
     }
 
-    private static final TreeMap<Integer, Double> sgAtg = new TreeMap<>();
+    private static final TreeMap<Integer, Double> sgRough = new TreeMap<>();
     static {
-//        sgAtg.put();
+        sgRough.put(0, 0.00);
+        sgRough.put(10, 2.49); sgRough.put(15, 2.54); sgRough.put(20, 2.59);
+        sgRough.put(25, 2.64); sgRough.put(30, 2.69); sgRough.put(35, 2.74);
+        sgRough.put(40, 2.78); sgRough.put(45, 2.82); sgRough.put(50, 2.85);
+        sgRough.put(55, 2.88); sgRough.put(60, 2.91); sgRough.put(65, 2.92);
+        sgRough.put(70, 2.93); sgRough.put(75, 2.95); sgRough.put(80, 2.96);
+        sgRough.put(85, 2.97); sgRough.put(90, 2.99); sgRough.put(95, 3.01);
+        sgRough.put(100, 3.02); sgRough.put(105, 3.03); sgRough.put(110, 3.04);
+        sgRough.put(115, 3.06);
+        sgRough.put(120, 3.08);
+        sgRough.put(125, 3.09);
+        sgRough.put(130, 3.11);
+        sgRough.put(135, 3.13);
+        sgRough.put(140, 3.15);
+        sgRough.put(145, 3.17);
+        sgRough.put(150, 3.19);
+        sgRough.put(155, 3.21);
+        sgRough.put(160, 3.23);
+        sgRough.put(165, 3.25);
+        sgRough.put(170, 3.27);
+        sgRough.put(175, 3.29);
+        sgRough.put(180, 3.31);
+        sgRough.put(185, 3.34);
+        sgRough.put(190, 3.37);
+        sgRough.put(195, 3.40);
+        sgRough.put(200, 3.42);
+        sgRough.put(210, 3.48);
+        sgRough.put(220, 3.53);
+        sgRough.put(230, 3.60);
+        sgRough.put(240, 3.64);
+        sgRough.put(250, 3.69);
+        sgRough.put(260, 3.74);
+        sgRough.put(270, 3.78);
+        sgRough.put(280, 3.83);
+        sgRough.put(290, 3.87);
+        sgRough.put(300, 3.90);
+        sgRough.put(320, 3.95);
+        sgRough.put(340, 4.02);
+        sgRough.put(360, 4.11);
+        sgRough.put(380, 4.21);
+        sgRough.put(400, 4.30);
+        sgRough.put(420, 4.34);
+        sgRough.put(440, 4.39);
+        sgRough.put(460, 4.48);
+        sgRough.put(480, 4.59);
+        sgRough.put(500, 4.72);
+        sgRough.put(520, 4.85);
+        sgRough.put(540, 4.97);
+        sgRough.put(560, 5.05);
+        sgRough.put(580, 5.10);
+        sgRough.put(600, 5.13);
+    }
+
+    private static final TreeMap<Integer, Double> sgSand = new TreeMap<>();
+    static {
+        sgSand.put(0, 0.00);
+        sgSand.put(10, 2.41); sgSand.put(15, 2.47); sgSand.put(20, 2.53);
+        sgSand.put(25, 2.59); sgSand.put(30, 2.67); sgSand.put(35, 2.76);
+        sgSand.put(40, 2.82); sgSand.put(45, 2.90); sgSand.put(50, 2.98);
+        sgSand.put(55, 3.07); sgSand.put(60, 3.15); sgSand.put(65, 3.17);
+        sgSand.put(70, 3.19); sgSand.put(75, 3.22); sgSand.put(80, 3.24);
+        sgSand.put(85, 3.24); sgSand.put(90, 3.24); sgSand.put(95, 3.24);
+        sgSand.put(100, 3.24); sgSand.put(105, 3.24); sgSand.put(110, 3.24);
+        sgSand.put(115, 3.24);
+        sgSand.put(120, 3.24);
+        sgSand.put(125, 3.24);
+        sgSand.put(130, 3.24);
+        sgSand.put(135, 3.24);
+        sgSand.put(140, 3.24);
+        sgSand.put(145, 3.24);
+        sgSand.put(150, 3.25);
+        sgSand.put(155, 3.26);
+        sgSand.put(160, 3.28);
+        sgSand.put(165, 3.30);
+        sgSand.put(170, 3.33);
+        sgSand.put(175, 3.36);
+        sgSand.put(180, 3.40);
+        sgSand.put(185, 3.43);
+        sgSand.put(190, 3.47);
+        sgSand.put(195, 3.51);
+        sgSand.put(200, 3.55);
+        sgSand.put(210, 3.62);
+        sgSand.put(220, 3.70);
+        sgSand.put(230, 3.77);
+        sgSand.put(240, 3.84);
+        sgSand.put(250, 3.88);
+        sgSand.put(260, 3.93);
+        sgSand.put(270, 3.96);
+        sgSand.put(280, 4.00);
+        sgSand.put(290, 4.02);
+        sgSand.put(300, 4.04);
+        sgSand.put(320, 4.12);
+        sgSand.put(340, 4.26);
+        sgSand.put(360, 4.41);
+        sgSand.put(380, 4.55);
+        sgSand.put(400, 4.69);
+        sgSand.put(420, 4.73);
+        sgSand.put(440, 4.78);
+        sgSand.put(460, 4.87);
+        sgSand.put(480, 4.98);
+        sgSand.put(500, 5.11);
+        sgSand.put(520, 5.24);
+        sgSand.put(540, 5.36);
+        sgSand.put(560, 5.44);
+        sgSand.put(580, 5.49);
+        sgSand.put(600, 5.52);
     }
 
     private static final TreeMap<Integer, Double> sgPutt = new TreeMap<>();
@@ -168,6 +273,12 @@ public class UtilityFunctions {
             case "Fairway":
                 startSG = nearestKey(sgApp, start);
                 break;
+            case "Rough":
+                startSG = nearestKey(sgRough, start);
+                break;
+            case "Sand":
+                startSG = nearestKey(sgSand, start);
+                break;
             case "Green":
                 startSG = nearestKey(sgPutt, start);
                 break;
@@ -179,6 +290,12 @@ public class UtilityFunctions {
             case "Fairway":
                 finishSG = nearestKey(sgApp, finish);
                 break;
+            case "Rough":
+                finishSG = nearestKey(sgRough, finish);
+                break;
+            case "Sand":
+                finishSG = nearestKey(sgSand, finish);
+                break;
             case "Green":
                 finishSG = nearestKey(sgPutt, finish);
                 break;
@@ -189,16 +306,7 @@ public class UtilityFunctions {
         return gained;
     }
 
-    public static double getExpectedStrokes(int holeLength)
-    {
-        double expectedStrokes = 0;
-
-        if (holeLength <= 10) expectedStrokes = 2.20;
-        else if (holeLength >= 60) expectedStrokes = 2.70;
-
-        return expectedStrokes;
-    }
-
+    // https://stackoverflow.com/questions/9482988/find-the-closest-answer-in-hashmap
     public static Double nearestKey(TreeMap<Integer, Double> map, Integer target) {
         double minDiff = Double.MAX_VALUE;
         Double gained = null;
