@@ -1,8 +1,6 @@
 package main;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,13 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class Main extends Application {
 
@@ -30,6 +23,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        // Initial setup.
         Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
         primaryStage.setTitle("Golf App");
         primaryStage.setScene(new Scene((Parent) root, 750, 750));
@@ -42,55 +36,19 @@ public class Main extends Application {
 
         Scene scene = new Scene(grid, 750, 500);
         primaryStage.setScene(scene);
-
-//        TextField test = new TextField();
-//        TextField test2 = new TextField();
-//
-//        Label l = new Label("Enter score");
-//
-//        // action event
-//        EventHandler<ActionEvent> testEvent = new EventHandler<ActionEvent>() {
-//            public void handle(ActionEvent e)
-//            {
-//                l.setText(test.getText());
-//            }
-//        };
-
-        // when enter is pressed
-//        test.setOnAction(testEvent);
-//
-//        grid.add(test, 5, 5);
-//        grid.add(test2, 7, 7);
-//        grid.add(l, 5, 6);
-//
-//        Button btn = new Button("Test");
-//        HBox hbBtn = new HBox(10);
-//        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-//        hbBtn.getChildren().add(btn);
-//        grid.add(hbBtn, 1, 4);
-
         primaryStage.show();
-
-//        btn.setOnAction((calculate) -> {
-////            double ans = UtilityFunctions.calculateHole(Integer.parseInt(test.getText()), Integer.parseInt(test2.getText()), );
-////            System.out.println(ans);
-//        });
 
         // Set up for all shot info for each hole.
         String[] locOpt = {"Tee", "Fairway", "Rough", "Sand", "Green"};
-        TextField[] hole1Dists = new TextField[8];
-        TextField[] hole2Dists = new TextField[8];
-        ChoiceBox[] hole1Locs = new ChoiceBox[8];
-        ChoiceBox[] hole2Locs = new ChoiceBox[8];
-        for (int i = 0; i < 8; i++) {
-            hole1Dists[i] = new TextField();
-            hole1Dists[i].setMaxWidth(60);
-            hole1Locs[i] = new ChoiceBox();
-            hole1Locs[i].getItems().addAll(locOpt);
-            hole2Dists[i] = new TextField();
-            hole2Dists[i].setMaxWidth(60);
-            hole2Locs[i] = new ChoiceBox();
-            hole2Locs[i].getItems().addAll(locOpt);
+        TextField[][] holeDists = new TextField[19][8];
+        ChoiceBox[][] holeLocs = new ChoiceBox[19][8];
+        for (int j = 1; j <= 18; j++) {
+            for (int i = 0; i < 8; i++) {
+                holeDists[j][i] = new TextField();
+                holeDists[j][i].setMaxWidth(60);
+                holeLocs[j][i] = new ChoiceBox();
+                holeLocs[j][i].getItems().addAll(locOpt);
+            }
         }
 
         // Scene and grid setup for each hole screen.
@@ -98,9 +56,15 @@ public class Main extends Application {
         Scene[] holeScenes = new Scene[19];
         Button[] nextHoleBtn = new Button[19];
         Button[] previousHoleBtn = new Button[19];
+        Button[] calculateHole = new Button[19];
         Label[] holeNums = new Label[19];
         Label[] scoreLab = new Label[19];
         Label[] distLab = new Label[19];
+        Label[] holeSGTot = new Label[19];
+        Label[] holeSGTee = new Label[19];
+        Label[] holeSGApp = new Label[19];
+        Label[] holeSGAtg = new Label[19];
+        Label[] holeSGGrn = new Label[19];
         for (int i = 0; i <= 18; i++) {
             holeGrids[i] = new GridPane();
             holeGrids[i].setAlignment(Pos.TOP_CENTER);
@@ -110,6 +74,7 @@ public class Main extends Application {
             holeScenes[i] = new Scene(holeGrids[i], 750, 500);
             previousHoleBtn[i] = new Button("Previous Hole");
             nextHoleBtn[i] = new Button("Hole " + (i + 1));
+            calculateHole[i] = new Button("Calculate Strokes Gained");
             int finalI = i + 1;
             if (i < 18) {
                 nextHoleBtn[i].setOnAction(e -> primaryStage.setScene(holeScenes[finalI]));
@@ -118,6 +83,11 @@ public class Main extends Application {
             holeNums[i] = new Label("Hole " + i);
             scoreLab[i] = new Label("Enter shot location");
             distLab[i] = new Label("Enter shot distance");
+            holeSGTee[i] = new Label("Off the tee: ");
+            holeSGApp[i] = new Label("Approach: ");
+            holeSGAtg[i] = new Label("Around the green: ");
+            holeSGGrn[i] = new Label("Putting: ");
+            holeSGTot[i] = new Label("Total: ");
             holeGrids[i].add(holeNums[i], 0, 2);
             if (i < 18)
                 holeGrids[i].add(nextHoleBtn[i], 2, 0);
@@ -185,223 +155,153 @@ public class Main extends Application {
         grid.add(nineBtn, 0, 3);
         grid.add(eighteenBtn, 2, 3);
 
-        //Scene 2
-        GridPane gridTwo = new GridPane();
-        gridTwo.setAlignment(Pos.TOP_CENTER);
-        gridTwo.setHgap(10);
-        gridTwo.setVgap(10);
-        gridTwo.setPadding(new Insets(25, 25, 25, 25));
+        // Setup for all of the calculate hole buttons on each hole screen.
+        for (int i = 1; i <= 18; i++) {
+            int finalI = i;
+            calculateHole[i].setOnAction((event) -> {
+                double sg1 = 0, sg2 = 0, sg3 = 0, sg4 = 0, sg5 = 0, sg6 = 0, sg7 = 0, tee = 0, app = 0, atg = 0, grn = 0;
 
-        GridPane hole2Grid = new GridPane();
-        hole2Grid.setAlignment(Pos.CENTER);
-        hole2Grid.setHgap(10);
-        hole2Grid.setVgap(10);
-        hole2Grid.setPadding(new Insets(25, 25, 25, 25));
+                if (holeDists[finalI][1] != null) {
+                    sg1 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][0].getText()), Integer.parseInt(holeDists[finalI][1].getText()),
+                            "Tee", (String) holeLocs[finalI][0].getValue());
+                    sgTee += sg1;
+                    tee += sg1;
+                }
+                if (!holeDists[finalI][2].getText().equals("")) {
+                    sg2 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][1].getText()), Integer.parseInt(holeDists[finalI][2].getText()),
+                            (String) holeLocs[finalI][0].getValue(), (String) holeLocs[finalI][1].getValue());
+                    if ((holeLocs[finalI][0].getValue()).equals("Green")) {
+                        sgGrn += sg2;
+                        grn += sg2;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][1].getText()) <= 30) {
+                        sgAtg += sg2;
+                        atg += sg2;
+                    }
+                    else {
+                        sgApp += sg2;
+                        app += sg2;
+                    }
+                }
+                if (!holeDists[finalI][3].getText().equals("")) {
+                    sg3 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][2].getText()), Integer.parseInt(holeDists[finalI][3].getText()),
+                            (String) holeLocs[finalI][1].getValue(), (String) holeLocs[finalI][2].getValue());
+                    if ((holeLocs[finalI][1].getValue()).equals("Green")) {
+                        sgGrn += sg3;
+                        grn += sg3;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][2].getText()) <= 30) {
+                        sgAtg += sg3;
+                        atg += sg3;
+                    }
+                    else {
+                        sgApp += sg3;
+                        app += sg3;
+                    }
+                }
+                if (!holeDists[finalI][4].getText().equals("")) {
+                    sg4 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][3].getText()), Integer.parseInt(holeDists[finalI][4].getText()),
+                            (String) holeLocs[finalI][2].getValue(), (String) holeLocs[finalI][3].getValue());
+                    if ((holeLocs[finalI][2].getValue()).equals("Green")) {
+                        sgGrn += sg4;
+                        grn += sg4;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][3].getText()) <= 30) {
+                        sgAtg += sg4;
+                        atg += sg4;
+                    }
+                    else {
+                        sgApp += sg4;
+                        app += sg4;
+                    }
+                }
+                if (!holeDists[finalI][5].getText().equals("")) {
+                    sg5 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][4].getText()), Integer.parseInt(holeDists[finalI][5].getText()),
+                            (String) holeLocs[finalI][3].getValue(), (String) holeLocs[finalI][4].getValue());
+                    if ((holeLocs[finalI][3].getValue()).equals("Green")) {
+                        sgGrn += sg5;
+                        grn += sg5;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][4].getText()) <= 30) {
+                        sgAtg += sg5;
+                        atg += sg5;
+                    }
+                    else {
+                        sgApp += sg5;
+                        app += sg5;
+                    }
+                }
+                if (!holeDists[finalI][6].getText().equals("")) {
+                    sg6 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][5].getText()), Integer.parseInt(holeDists[finalI][6].getText()),
+                            (String) holeLocs[finalI][4].getValue(), (String) holeLocs[finalI][5].getValue());
+                    if ((holeLocs[finalI][4].getValue()).equals("Green")) {
+                        sgGrn += sg6;
+                        grn += sg6;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][5].getText()) <= 30) {
+                        sgAtg += sg6;
+                        atg += sg6;
+                    }
+                    else {
+                        sgApp += sg6;
+                        app += sg6;
+                    }
+                }
+                if (!holeDists[finalI][7].getText().equals("")) {
+                    sg7 = UtilityFunctions.calculateHole(Integer.parseInt(holeDists[finalI][6].getText()), Integer.parseInt(holeDists[finalI][7].getText()),
+                            (String) holeLocs[finalI][5].getValue(), (String) holeLocs[finalI][6].getValue());
+                    if ((holeLocs[finalI][5].getValue()).equals("Green")) {
+                        sgGrn += sg7;
+                        grn += sg7;
+                    }
+                    else if (Integer.parseInt(holeDists[finalI][6].getText()) <= 30) {
+                        sgAtg += sg7;
+                        atg += sg7;
+                    }
+                    else {
+                        sgApp += sg7;
+                        app += sg7;
+                    }
+                }
 
-        Scene hole2Scene = new Scene(hole2Grid, 750, 500);
-        Button hole2But = new Button("Hole 2");
-        hole2But.setOnAction(e -> primaryStage.setScene(hole2Scene));
-        Button button2= new Button("Home Screen");
-        button2.setOnAction(e -> primaryStage.setScene(scene));
-
-        // Hole 2 calculations.
-        Label result = new Label("Strokes Gained: ");
-        Label h1res = new Label();
-        Label h2Tee = new Label("Off the tee: ");
-        Label h2App = new Label("Approach: ");
-        Label h2Atg = new Label("Around the green: ");
-        Label h2Grn = new Label("Putting: ");
-        Label h2Tot = new Label("Total: ");
-
-        Button calculateH2 = new Button("Calculate strokes gained.");
-        calculateH2.setOnAction((event) -> {
-            double sg1 = 0, sg2 = 0, sg3 = 0, sg4 = 0, sg5 = 0, tee = 0, app = 0, atg = 0, grn = 0;
-
-            if (hole2Dists[1] != null) {
-                sg1 = UtilityFunctions.calculateHole(Integer.parseInt(hole2Dists[0].getText()), Integer.parseInt(hole2Dists[1].getText()),
-                        "Tee", (String) hole2Locs[0].getValue());
-                tee += sg1;
-                sgTee += sg1;
-            }
-            if (hole2Dists[2] != null && hole2Dists[1] != null) {
-                sg2 = UtilityFunctions.calculateHole(Integer.parseInt(hole2Dists[1].getText()), Integer.parseInt(hole2Dists[2].getText()),
-                        (String) hole2Locs[0].getValue(), (String) hole2Locs[1].getValue());
-                app += sg2;
-                sgApp += sg2;
-            }
-            if (hole2Dists[3] != null && hole2Dists[2] != null) {
-                sg3 = UtilityFunctions.calculateHole(Integer.parseInt(hole2Dists[2].getText()), Integer.parseInt(hole2Dists[3].getText()),
-                        (String) hole2Locs[1].getValue(), (String) hole2Locs[2].getValue());
-                app += sg3;
-                sgApp += sg3;
-            }
-            if (hole2Dists[4] != null && hole2Dists[3] != null) {
-                sg4 = UtilityFunctions.calculateHole(Integer.parseInt(hole2Dists[3].getText()), Integer.parseInt(hole2Dists[4].getText()),
-                        (String) hole2Locs[2].getValue(), (String) hole2Locs[3].getValue());
-                grn += sg4;
-                sgGrn += sg4;
-            }
-            if (!(hole2Dists[5].toString()).equals("")) { //&& hole1Dists[4] != null
-                sg5 = 0;
-            }
-            else {
-                sg5 = UtilityFunctions.calculateHole(Integer.parseInt(hole2Dists[4].getText()), Integer.parseInt(hole2Dists[5].getText()),
-                        (String) hole2Locs[3].getValue(), (String) hole2Locs[4].getValue());
-                grn += sg5;
-                sgGrn += sg5;
-            }
-            double total = sg1 + sg2 + sg3 + sg4 + sg5;
-            sgTotal += total;
-            h2Tot.setText("Strokes Gained on hole: " + String.format("%.2f" , total));
-            h2Tee.setText("Off the tee: " + String.format("%.2f" , tee));
-            h2App.setText("Approach: " + String.format("%.2f" , app));
-            h2Atg.setText("Around the green: " + String.format("%.2f" , atg));
-            h2Grn.setText("Putting: " + String.format("%.2f" , grn));
-            finalTeeRes.setText(String.format("%.2f" , sgTee));
-            finalAppRes.setText(String.format("%.2f" , sgApp));
-            finalAtgRes.setText(String.format("%.2f" , sgAtg));
-            finalGrnRes.setText(String.format("%.2f" , sgGrn));
-            finalTotRes.setText(String.format("%.2f" , sgTotal));
-        });
-
-        // Hole 1 calculations
-        Button buttonCalculate9 = new Button("Calculate strokes gained.");
-        buttonCalculate9.setOnAction((event) -> {
-            double sg1 = 0, sg2 = 0, sg3 = 0, sg4 = 0, sg5 = 0;
-
-            if (hole1Dists[1] != null) {
-                sg1 = UtilityFunctions.calculateHole(Integer.parseInt(hole1Dists[0].getText()), Integer.parseInt(hole1Dists[1].getText()),
-                        "Tee", (String) hole1Locs[0].getValue());
-                sgTee += sg1;
-            }
-            if (hole1Dists[2] != null && hole1Dists[1] != null) {
-                sg2 = UtilityFunctions.calculateHole(Integer.parseInt(hole1Dists[1].getText()), Integer.parseInt(hole1Dists[2].getText()),
-                        (String) hole1Locs[0].getValue(), (String) hole1Locs[1].getValue());
-                sgApp += sg2;
-            }
-            if (hole1Dists[3] != null && hole1Dists[2] != null) {
-                sg3 = UtilityFunctions.calculateHole(Integer.parseInt(hole1Dists[2].getText()), Integer.parseInt(hole1Dists[3].getText()),
-                        (String) hole1Locs[1].getValue(), (String) hole1Locs[2].getValue());
-                sgAtg += sg3;
-            }
-            if (hole1Dists[4] != null && hole1Dists[3] != null) {
-                sg4 = UtilityFunctions.calculateHole(Integer.parseInt(hole1Dists[3].getText()), Integer.parseInt(hole1Dists[4].getText()),
-                        (String) hole1Locs[2].getValue(), (String) hole1Locs[3].getValue());
-                sgGrn += sg4;
-            }
-            if (!(hole1Dists[5].toString()).equals("")) { //&& hole1Dists[4] != null
-                sg5 = 0;
-            }
-            else {
-                sg5 = UtilityFunctions.calculateHole(Integer.parseInt(hole1Dists[4].getText()), Integer.parseInt(hole1Dists[5].getText()),
-                        (String) hole1Locs[3].getValue(), (String) hole1Locs[4].getValue());
-                sgGrn += sg5;
-            }
-
-            System.out.println(sg1);
-
-////            System.out.printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-////                    sg1, sg2, sg3, sg4, sg5, sg6, sg7, sg8, sg9);
-//            double total = sg1 + sg2 + sg3 + sg4 + sg5 + sg6 + sg7 + sg8 + sg9;
-            result.setText("Strokes Gained: " + String.format("%.2f, %.2f, %.2f, %.2f, %.2f", sg1, sg2, sg3, sg4, sg5));
-            double total = sg1 + sg2 + sg3 + sg4 + sg5;
-            sgTotal += total;
-            h1res.setText("Strokes Gained on hole: " + String.format("%.2f" , total));
+                double total = sg1 + sg2 + sg3 + sg4 + sg5 + sg6 + sg7;
+                sgTotal += total;
+                holeSGTot[finalI].setText("Strokes Gained on hole: " + String.format("%.2f" , total));
+                holeSGTee[finalI].setText("Off the tee: " + String.format("%.2f" , tee));
+                holeSGApp[finalI].setText("Approach: " + String.format("%.2f" , app));
+                holeSGAtg[finalI].setText("Around the green: " + String.format("%.2f" , atg));
+                holeSGGrn[finalI].setText("Putting: " + String.format("%.2f" , grn));
+                finalTeeRes.setText(String.format("%.2f" , sgTee));
+                finalAppRes.setText(String.format("%.2f" , sgApp));
+                finalAtgRes.setText(String.format("%.2f" , sgAtg));
+                finalGrnRes.setText(String.format("%.2f" , sgGrn));
+                finalTotRes.setText(String.format("%.2f" , sgTotal));
             });
+        }
 
-        gridTwo.add(button2, 1, 0);
-        gridTwo.add(hole2But, 2, 0);
-
-        holeGrids[1].add(h1res, 3, 4);
-        ;
-        holeGrids[1].add(hole1Dists[0], 1, 2);
-//        gridTwo.add(h1Score, 2, 2);
-
-        holeGrids[1].add(hole1Dists[1], 1, 3);
-        holeGrids[1].add(hole1Locs[0], 2, 3);
-        holeGrids[1].add(hole1Dists[2], 1, 4);
-        holeGrids[1].add(hole1Locs[1], 2, 4);
-        holeGrids[1].add(hole1Dists[3], 1, 5);
-        holeGrids[1].add(hole1Locs[2], 2, 5);
-        holeGrids[1].add(hole1Dists[4], 1, 6);
-        holeGrids[1].add(hole1Locs[3], 2, 6);
-        holeGrids[1].add(hole1Dists[5], 1, 7);
-        holeGrids[1].add(hole1Locs[4], 2, 7);
-        holeGrids[1].add(hole1Dists[6], 1, 8);
-        holeGrids[1].add(hole1Locs[5], 2, 8);
-        holeGrids[1].add(hole1Dists[7], 1, 9);
-        holeGrids[1].add(hole1Locs[6], 2, 9);
-
-        holeGrids[2].add(hole2Dists[0], 1, 2);
-//        gridTwo.add(h1Score, 2, 2);
-
-        holeGrids[2].add(hole2Dists[1], 1, 3);
-        holeGrids[2].add(hole2Locs[0], 2, 3);
-        holeGrids[2].add(hole2Dists[2], 1, 4);
-        holeGrids[2].add(hole2Locs[1], 2, 4);
-        holeGrids[2].add(hole2Dists[3], 1, 5);
-        holeGrids[2].add(hole2Locs[2], 2, 5);
-        holeGrids[2].add(hole2Dists[4], 1, 6);
-        holeGrids[2].add(hole2Locs[3], 2, 6);
-        holeGrids[2].add(hole2Dists[5], 1, 7);
-        holeGrids[2].add(hole2Locs[4], 2, 7);
-        holeGrids[2].add(hole2Dists[6], 1, 8);
-        holeGrids[2].add(hole2Locs[5], 2, 8);
-        holeGrids[2].add(hole2Dists[7], 1, 9);
-        holeGrids[2].add(hole2Locs[6], 2, 9);
-        holeGrids[2].add(calculateH2, 1, 11);
-        holeGrids[2].add(h2Tee, 3, 3);
-        holeGrids[2].add(h2App, 3, 4);
-        holeGrids[2].add(h2Atg, 3, 5);
-        holeGrids[2].add(h2Grn, 3, 6);
-        holeGrids[2].add(h2Tot, 3, 7);
-
-        holeGrids[1].add(buttonCalculate9, 1, 11);
-        holeGrids[1].add(result, 2, 11);
-
-//        ScrollPane sp = new ScrollPane(gridTwo);
-//        gridTwo.add(sp, 0, 1);
-//        GridPane.setHgrow(sp, Priority.ALWAYS);
-
-//        ScrollPane scrollPane = new ScrollPane();
-//        scrollPane.setContent(gridTwo);
-
-//        root.getChildren().addAll(scrollPane);
-//        scene.setRoot(root);
-
-
-//        VBox layout2= new VBox(20);
-//        layout2.getChildren().addAll(label2, button2, h1Dist, h1Score, h2Dist, h2Score);
-//        Scene sceneTwo = new Scene(scrollPane,750,500);
-//
-//        Button btnTwo = new Button("Test");
-//        HBox hbBtnTwo = new HBox(10);
-//        hbBtnTwo.setAlignment(Pos.BOTTOM_RIGHT);
-//        hbBtnTwo.getChildren().add(btnTwo);
-//        grid.add(hbBtnTwo, 2, 4);
-//
-//        Button b3 = new Button("Go to scene 2");
-//        b3.setOnAction(e -> primaryStage.setScene(sceneTwo));
-//        grid.add(b3, 6, 6);
-//
-//        btnTwo.setOnAction((event) -> {
-//            try {
-//                SceneController.switchToScene2(event);
-//            } catch (IOException exception) {
-//                exception.printStackTrace();
-//            }
-//        });
+        // Adding all the items to each hole screen grid.
+        for (int i = 1; i <= 18; i++) {
+            holeGrids[i].add(holeDists[i][0], 1, 2);
+            holeGrids[i].add(holeDists[i][1], 1, 3);
+            holeGrids[i].add(holeLocs[i][0], 2, 3);
+            holeGrids[i].add(holeDists[i][2], 1, 4);
+            holeGrids[i].add(holeLocs[i][1], 2, 4);
+            holeGrids[i].add(holeDists[i][3], 1, 5);
+            holeGrids[i].add(holeLocs[i][2], 2, 5);
+            holeGrids[i].add(holeDists[i][4], 1, 6);
+            holeGrids[i].add(holeLocs[i][3], 2, 6);
+            holeGrids[i].add(holeDists[i][5], 1, 7);
+            holeGrids[i].add(holeLocs[i][4], 2, 7);
+            holeGrids[i].add(holeDists[i][6], 1, 8);
+            holeGrids[i].add(holeLocs[i][5], 2, 8);
+            holeGrids[i].add(holeDists[i][7], 1, 9);
+            holeGrids[i].add(holeLocs[i][6], 2, 9);
+            holeGrids[i].add(calculateHole[i], 1, 11);
+            holeGrids[i].add(holeSGTee[i], 3, 3);
+            holeGrids[i].add(holeSGApp[i], 3, 4);
+            holeGrids[i].add(holeSGAtg[i], 3, 5);
+            holeGrids[i].add(holeSGGrn[i], 3, 6);
+            holeGrids[i].add(holeSGTot[i], 3, 7);
+        }
     }
-
-//    public void changeScene(String fxml){
-//        Parent pane = null;
-//        try {
-//            pane = FXMLLoader.load(
-//                    getClass().getResource(fxml));
-//        } catch (IOException exception) {
-//            exception.printStackTrace();
-//        }
-//
-//        primaryStage.getScene().setRoot(pane);
-//    }
 }
