@@ -89,7 +89,7 @@ public class Main extends Application {
             holeSGGrn[i] = new Label("Putting: ");
             holeSGTot[i] = new Label("Total: ");
             holeGrids[i].add(holeNums[i], 0, 2);
-            if (i < 18)
+            if (i != 9 && i < 18)
                 holeGrids[i].add(nextHoleBtn[i], 2, 0);
             holeGrids[i].add(distLab[i], 1, 1);
             holeGrids[i].add(scoreLab[i], 2, 1);
@@ -107,6 +107,9 @@ public class Main extends Application {
         Button goToTotal = new Button("Finish");
         goToTotal.setOnAction(e -> primaryStage.setScene(totalScene));
         holeGrids[18].add(goToTotal, 2, 0);
+        Button finishHome = new Button("Go Home");
+        finishHome.setOnAction(e -> primaryStage.setScene(scene));
+        totalGrid.add(finishHome, 0, 5);
 
         Label finalTee = new Label("Off the tee: ");
         Label finalApp = new Label("Approach: ");
@@ -143,9 +146,17 @@ public class Main extends Application {
         // Set up for start screen.
         Button nineBtn = new Button("Nine Holes");
         Button eighteenBtn = new Button("Eighteen Holes");
-        eighteenBtn.setOnAction((e -> primaryStage.setScene(holeScenes[1])));
+        eighteenBtn.setOnAction((e -> {
+            primaryStage.setScene(holeScenes[1]);
+            holeGrids[9].add(nextHoleBtn[10], 2, 0);
+        }));
+        nineBtn.setOnAction((event) -> {
+            primaryStage.setScene(holeScenes[1]);
+            holeGrids[9].add(goToTotal, 2, 0);
+        });
         Button home = new Button("Home");
         home.setOnAction(e -> primaryStage.setScene(scene));
+        holeGrids[1].add(home, 1, 0);
 
         Label title = new Label("Storm Golf Statistics");
         title.setFont(Font.font(20));
